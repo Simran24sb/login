@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <style>
+        body {
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            position: absolute;
+        }
+        
+        .header {
+            display: block;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+           height: 60%;
+           width: 60%;
+            transform: translate(50%, 0%);
+        }
+
+        .logo1 {
+            height: 40%;
+            width: 40%;
+            transform: translate(140%, -30%);
+        }
+
+        .login-container {
+            transform: translate(80%, 0%);
+        }
+
+        .login-container h2 {
+            margin-bottom: 20px;
+        }
+
+        .login-container label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .login-container input {
+            width: 140%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1.8px solid #000000;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(130, 130, 130, 0.2); /* Shadow added */
+            
+        }
+
+        .login-container button {
+            width: 50%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgb(91, 92, 92);
+            transform: translate(100%, 0%);
+            
+        }
+        .toggle-password {
+            position: absolute;
+            top: 60%;
+            right: -120px;
+
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 20px;
+        }
+    </style>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+<body>
+    <div class="header">
+        <img class="logo" src="./Isolation_Mode (1).svg" alt="Logo">
+        <br>
+        <br>
+        <img class="logo1" src="./Powered by Tellercomm (1).svg" alt="Powered by Tellercomm">
+    </div>
+    <div class="login-container">
+        <h3>Hospital admin login</h3>
+        <div id="error-message" class="error-message"></div>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Hospital ID*" name="usr" required>
+            <input type="password" id="password" placeholder="Password*" name="psw" required>
+            <i class="fas fa-eye toggle-password" id="toggle-password"></i>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            // Simple client-side validation
+            if (username === '' || password === '') {
+                document.getElementById('error-message').innerText = 'Please fill in both fields.';
+                return;
+            }
+
+            // Simulate a login process (replace with your own logic)
+            if (username === '1024' && password === 'admin') {
+                window.location.href = './dashboard.html'; // Redirect to another page
+            } else {
+                document.getElementById('error-message').innerText = 'Invalid username or password.';
+            }
+        });
+
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            var passwordInput = document.getElementById('password');
+            var passwordIcon = document.getElementById('toggle-password');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.add('fa-eye');
+                passwordIcon.classList.remove('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.add('fa-eye-slash');
+                passwordIcon.classList.remove('fa-eye');
+            }
+        });
+    </script>
+</body>
+</html>

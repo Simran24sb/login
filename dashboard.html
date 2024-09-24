@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 20px;
+        }
+        .dashboard {
+            max-width: 800px;
+            margin: auto;
+        }
+        .btn-download {
+            background-color: #0ac1b5; /* Change this to your desired color */
+            color: white; /* Text color */
+        }
+        .btn-download:hover {
+            background-color: #08aea8; /* Darker shade for hover effect */
+        }
+        .btn-delete {
+            background-color: #dc3545; /* Bootstrap danger color */
+            color: white; /* Text color */
+        }
+        .btn-delete:hover {
+            background-color: #c82333; /* Darker shade for hover effect */
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+    <h1>Document Dashboard</h1>
+
+    <!-- Document Upload Section -->
+    <div class="card mb-4">
+        <div class="card-header">Upload Documents</div>
+        <div class="card-body">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="fileInput">Select documents:</label>
+                    <input type="file" class="form-control" id="fileInput" multiple required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+            <div id="uploadStatus" class="mt-3"></div>
+        </div>
+    </div>
+
+    <!-- Uploaded Documents List -->
+    <div class="card mb-4">
+        <div class="card-header">Uploaded Documents</div>
+        <div class="card-body">
+            <ul id="uploadedFilesList" class="list-group"></ul>
+        </div>
+    </div>
+
+    <!-- Form Creation Section -->
+    <div class="card">
+        <div class="card-header">Create Form</div>
+        <div class="card-body">
+            <form id="formCreation">
+                <div class="form-group">
+                    <label for="formField">Field Name:</label>
+                    <input type="text" class="form-control" id="formField" required>
+                </div>
+                <button type="button" id="addField" class="btn btn-secondary">Add Field</button>
+                <button type="submit" class="btn btn-primary">Save Form</button>
+            </form>
+            <div id="formPreview" class="mt-3"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const uploadedFiles = JSON.parse(localStorage.getItem('uploadedFiles')) || [];
+
+    // Load uploaded files on page load
+    window.onload = function() {
+        updateFileList();
+    };
+
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const fileInput = document.getElementById('fileInput');
+        const status = document.getElementById('uploadStatus');
+
+        // Process each file
+        Array.from(fileInput.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fileData = e.target.result; // Get the base64 encoded file data
+                uploadedFiles.push({ name: file.name, data: fileData }); // Store file name and base64 data
+                localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles));
+                updateFileList();
+            };
+            reader.readAsDataURL(file); // Read the file as a data URL
+        });
+
+        status.innerHTML = `<div class="alert alert-success">Files uploaded successfully!</div>`;
+        fileInput.value = ''; // Clear input
+    });
+
+    function updateFileList() {
+        const list = document.getElementById('uploadedFilesList');
+        list.innerHTML = ''; // Clear current list
+        uploadedFiles.forEach((file, index) => {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item';
+            listItem.innerHTML = `
+                <span>${file.name}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="${file.data}" target="_blank" class="btn btn-download btn-sm">View</a>
+                <a href="${file.data}" download="${file.name}" class="btn btn-download btn-sm">Download</a>
+                <button class="btn btn-delete btn-sm float-right" onclick="deleteFile(${index})">Delete</button>
+            `;
+            list.appendChild(listItem);
+        });
+    }
+
+    function deleteFile(index) {
+        uploadedFiles.splice(index, 1); // Remove the file from the array
+        localStorage.setItem('uploadedFiles', JSON.stringify(uploadedFiles)); // Update localStorage
+        updateFileList(); // Refresh the list
+    }
+
+    document.getElementById('formCreation').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formField = document.getElementById('formField').value;
+        const preview = document.getElementById('formPreview');
+
+        preview.innerHTML += `<div class="alert alert-info">Field "${formField}" has been added to the form!</div>`;
+        document.getElementById('formField').value = ''; // Clear input
+    });
+
+    document.getElementById('addField').addEventListener('click', function() {
+        const formField = document.getElementById('formField').value;
+        const preview = document.getElementById('formPreview');
+
+        if (formField) {
+            preview.innerHTML += `<div>${formField}</div>`;
+            document.getElementById('formField').value = ''; // Clear input
+        }
+    });
+</script>
+
+</body>
+</html>
